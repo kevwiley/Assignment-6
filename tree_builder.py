@@ -1,37 +1,66 @@
 class EmployeeNode:
-    '''
-    A class to represent a node in the binary tree.
-    Attributes:
-        name (str): The name of the employee.
-        left (EmployeeNode): The left child node, representing the left subordinate.
-        right (EmployeeNode): The right child node, representing the right subordinate.
-    '''
 
-    # Delete this line and implement the class below
-    pass
+    def __init__(self, name): 
+        self.name = name 
+        self.left = None 
+        self.right = None 
 
 class TeamTree:
-    '''
-    A class to represent a binary tree for managing a team structure.
-    Attributes:
-        root (EmployeeNode): The root node of the tree, representing the team lead.
-    Methods:
-        insert(manager_name, employee_name, side, current_node=None): Inserts a new employee under the specified manager.
-        print_tree(node=None, level=0): Prints the tree structure starting from the given node.
-
-    '''
     
-    # Delete this line and implement the class below
-    pass
+    def __init__(self):
+        self.root = None
 
-# Test your code here
+    def insert(self, manager_name, employee_name, side, current_node=None):
 
+        if self.root is None: #accounts for edge case of no root being entered
+            print("No root, please add one before entering employees.")
+            return
+        
+        if current_node is None: #allows value to be assigned to root if it doesn't already have one
+            current_node = self.root
 
+        if current_node.name == manager_name:
+            if side == "left" and current_node.left is None:#checks if user entered left, and if the left node is empty
+                current_node.left = EmployeeNode(employee_name) #if left node is empty, replaces the None with input
+                return True
+            elif side == "right" and current_node.right is None: #same as left checks if user entered right, and if the right node is empty
+                current_node.right = EmployeeNode(employee_name) #if right node is empty, replaces the None with input
+                return True
+            else:
+                print(f"{manager_name} already has 2 employees") #if both left and right are filled tells user and doesn't replace anything.
+                return True
 
+        found_left = False
+        found_right = False
 
+        if current_node.left: # checks through left and right nodes using recursion
+            found_left = self.insert(manager_name, employee_name, side, current_node.left)
+        if current_node.right:
+            found_right = self.insert(manager_name, employee_name, side, current_node.right)
 
+        if not(found_left or found_right): # prints if node doesn't exist
+            if current_node == self.root:
+                print(f"Parent node {manager_name} not found in the tree.")
+            return False
+        return
 
+    def print_tree(self, node=None, level=0):#prints out the contents of the tree
 
+        if self.root is None: #maccounts for edge case to makes sure the tree has data in it
+            print("Please enter data before trying to print list")
+            return
+
+        if node is None:
+            if level == 0:
+                node = self.root
+            else:
+                return
+        
+        indent = "    " * level #increases 
+        print(f"{indent}-{node.name}") #prints indent then the name of node
+
+        self.print_tree(node.left, level + 1) #increases node count each recursion until left or right node equals None
+        self.print_tree(node.right, level + 1)
 
 
 # CLI functionality
@@ -70,3 +99,10 @@ def company_directory():
             break
         else:
             print("❌ Invalid option. Try again.")
+            
+
+company_directory()
+
+
+
+
